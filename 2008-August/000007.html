@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Open1541-developers] IRQ-Konzept und Hardware-Ideen
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/open1541-developers/2008-August/index.html" >
+   <LINK REL="made" HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20IRQ-Konzept%20und%20Hardware-Ideen&In-Reply-To=%3Cuej52pc17.fsf%40dragon.akana.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000006.html">
+   <LINK REL="Next"  HREF="000008.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Open1541-developers] IRQ-Konzept und Hardware-Ideen</H1>
+    <B>Ingo Korb</B> 
+    <A HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20IRQ-Konzept%20und%20Hardware-Ideen&In-Reply-To=%3Cuej52pc17.fsf%40dragon.akana.de%3E"
+       TITLE="[Open1541-developers] IRQ-Konzept und Hardware-Ideen">ml at akana.de
+       </A><BR>
+    <I>Wed Aug  6 14:23:48 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000006.html">[Open1541-developers] IRQ-Konzept und Hardware-Ideen
+</A></li>
+        <LI>Next message: <A HREF="000008.html">[Open1541-developers] Mal sehen, ob der Admin aus dem Urlaub zur&#252;ck ist
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#7">[ date ]</a>
+              <a href="thread.html#7">[ thread ]</a>
+              <a href="subject.html#7">[ subject ]</a>
+              <a href="author.html#7">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Thomas Giesel &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/open1541-developers">skoe at directbox.com</A>&gt; writes:
+
+&gt;<i> Aber man br&#228;uchte IMHO min 128 k Flash und 32 k RAM. Und f&#252;r diesen Ausbau ist 
+</I>&gt;<i> Atmega auch nicht billiger/kleiner/leichter zu verarbeiten als ARM oder 
+</I>&gt;<i> AVR32. Oder?
+</I>
+Man br&#228;uchte daf&#252;r mindestens einen ATmega128(1) und ein externes RAM.
+
+&gt;<i> Das zweite Problem ist, dass der Haupcode (also ca. das, was jetzt im sd2iec 
+</I>&gt;<i> l&#228;uft) dann von C in diesen Bytecode &#252;bersetzt oder portiert werden muss (im 
+</I>&gt;<i> Falle eines 6502 k&#246;nnte man ja den cc65 versuchen).
+</I>
+Da werden einige Anpassungen notwendig sein, cc65 kennt zB keine
+Bitfilder.
+
+&gt;<i> Wenn man ihn bei 5V betreibt, braucht man keine Spannungsteiler. Hab aber 
+</I>&gt;<i> noch nicht kontrolliert, ob die LPC-Ausg&#228;nge von den Spannungen her dann f&#252;r 
+</I>&gt;<i> die Eing&#228;nge des HC03 reichen.
+</I>
+Bei einem HCT03 w&#252;rde es definitiv funktionieren.
+
+-ik
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000006.html">[Open1541-developers] IRQ-Konzept und Hardware-Ideen
+</A></li>
+	<LI>Next message: <A HREF="000008.html">[Open1541-developers] Mal sehen, ob der Admin aus dem Urlaub zur&#252;ck ist
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#7">[ date ]</a>
+              <a href="thread.html#7">[ thread ]</a>
+              <a href="subject.html#7">[ subject ]</a>
+              <a href="author.html#7">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/open1541-developers">More information about the Open1541-developers
+mailing list</a><br>
+</body></html>

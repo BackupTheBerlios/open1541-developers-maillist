@@ -1,0 +1,175 @@
+From skoe at directbox.com  Sat Sep  6 15:14:10 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Sat, 6 Sep 2008 15:14:10 +0200
+Subject: [Open1541-developers] Baudraten
+Message-ID: <200809061514.10989.skoe@directbox.com>
+
+Hallo,
+
+gerade habe ich auf meinem Stullenbrett den 10 MHz-Quartz gegen einen 16 MHz 
+ausgetauscht. 
+
+Vorher hatte ich 6 * 10 = 60 MHz Core Clock und 
+60 MHz / 16 (fest) / 98 (config) = 38265 ca. 38400 baud.
+Das ist zum Programmieren okay, zum Echtzeit-Debuggen manchmal ein bisschen 
+wenig. Und f?r evtl. folgende Datenanwendungen unbrauchbar.
+
+Jetzt habe ich 3 * 16 = 48 MHz Core oder 4 * 16 = 64 MHz Core und z.B.
+48 MHz / 16 / 26 = 115384 ca. 115200 baud oder sogar
+48 MHz / 16 / 3 = 1000000 baud zum Debuggen oder evtl. Datenanwendungen
+Allerdings kommt die automatische Baudratenerkennung zum Programmieren nur auf 
+19200, vermutlich weil sie die PLL nicht benutzt und deswegen nur 16 / 16 / x 
+kann.
+
+Einen Baudratenquartz kann ich nicht nehmen, weil ich dann nicht auf 1 MHz f?r 
+den 6502 komme.
+
+Nun meine Frage: Kann nur mein RS232-USB-Adapter so ungew?hnliche Baudraten 
+wie 500000 und 1000000, oder ist das "normal"?
+
+Wenn ich bei dem 16 MHz Quartz bleibe, muss ich mal sehen, ob ich dem 
+Programmiertool auch ein paar andere Bitraten beibringen kann... Oder ich 
+baue ein In-Application-Programming-Geraffel ein, dann kann ich die Software 
+bei programmierter PLL, z.B. mit 115200 r?berschieben.
+
+Gru?,
+
+Thomas
+
+
+
+From ogf at bnv-bamberg.de  Sat Sep  6 20:13:20 2008
+From: ogf at bnv-bamberg.de (Oliver Fleischmann)
+Date: Sat, 6 Sep 2008 20:13:20 +0200 (MEST)
+Subject: [Open1541-developers] Baudraten
+In-Reply-To: <200809061514.10989.skoe@directbox.com>
+Message-ID: <Pine.LNX.4.33.0809061945390.7969-100000@server.ogf.to>
+
+Hallo Thomas,
+
+> Nun meine Frage: Kann nur mein RS232-USB-Adapter so ungew??hnliche Baudraten
+> wie 500000 und 1000000, oder ist das "normal"?
+
+anscheinend habe manche USB-UARTs eine recht aufwendige Taktaufbereitung,
+wo das geht. Beim FT232RL sind diese Werte nach Datenblatt z.B. m?glich,
+der kann daf?r aber nicht mehr langsamer als 183 Baud.
+
+Modernere UART-Chips auf Steckkarten k?nnen meistens auch h?here
+Baudraten. Es sind aber nicht bei jedem Chip frei einstellbare Baudraten
+m?glich, oft gibts nur vielfache der Standartwerte.
+
+Im Datenblatt zum PL2303 steht z.B.:
+
+6000000 614400 38400 7200 1200
+3000000 460800 28800 4800 600
+2457600 230400 19200 3600 300
+1228800 115200 14400 2400 150
+921600 57600 9600 1800 75
+
+Oliver
+
+
+
+From gsc_mi at gmx.de  Sun Sep  7 01:12:04 2008
+From: gsc_mi at gmx.de (Gerald Sacchi)
+Date: Sun, 7 Sep 2008 01:12:04 +0200
+Subject: [Open1541-developers] Baudraten
+References: <200809061514.10989.skoe@directbox.com>
+Message-ID: <002301c91078$212d32e0$319efe91@schnac>
+
+> Nun meine Frage: Kann nur mein RS232-USB-Adapter so ungew?hnliche
+Baudraten
+> wie 500000 und 1000000, oder ist das "normal"?
+
+Wie der Oliver schon schrieb, normal ist das nicht.
+Der "CP2101" USB-to-UART Controller hat z.B.folgende Baud-Raten:
+
+300, 600, 1200, 1800,  2400, 4800, 7200, 9600, 14400, 19200
+28800, 38400, 56000, 115200, 128000, 230400, 460800, 921600
+
+Was h?lst Du denn davon:
+60 MHz / 16 (fest) / 67 (config)  =  55970  =  ca. 56000 Baud
+
+Der (urspr?ngliche ?) 16450 d?rfte die Rate vermutlich nicht m?gen, aber
+inzwischen steckt ja schon
+(fast) ?berall der verbesserte Nachfolger (16550) drinne, und der k?me damit
+klar.
+
+Oder Du vergi?t das mit dem "optional", und der FT232RL wird Pflicht. Aber
+wahrscheinlich keine
+so gute Idee.
+
+> Wenn ich bei dem 16 MHz Quartz bleibe, muss ich mal sehen, ob ich dem
+> Programmiertool auch ein paar andere Bitraten beibringen kann... Oder ich
+> baue ein In-Application-Programming-Geraffel ein, dann kann ich die
+Software
+> bei programmierter PLL, z.B. mit 115200 r?berschieben.
+
+Oder so...
+
+Gru?
+ Gerald
+
+
+
+From skoe at directbox.com  Sun Sep  7 08:43:54 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Sun, 7 Sep 2008 08:43:54 +0200
+Subject: [Open1541-developers] Baudraten
+In-Reply-To: <002301c91078$212d32e0$319efe91@schnac>
+References: <200809061514.10989.skoe@directbox.com>
+	<002301c91078$212d32e0$319efe91@schnac>
+Message-ID: <200809070843.54408.skoe@directbox.com>
+
+Hallo Oliver, Gerald,
+
+danke, dass Ihr so genau nachgesehen habt.
+
+> Was h?lst Du denn davon:
+> 60 MHz / 16 (fest) / 67 (config)  =  55970  =  ca. 56000 Baud
+
+Mhh, das kann der wieder nicht, den ich hier verwende, der k?nnte nur 57600.
+
+> Oder Du vergi?t das mit dem "optional", und der FT232RL wird Pflicht.
+> Aber wahrscheinlich keine so gute Idee.
+
+Genau. Auf alle F?lle nicht, solange es keine ganz tolle Anwendung daf?r gibt.
+Und da f?llt mir au?er Mounten von Disk-Images vom PC momentan nichts ein.
+
+Also lasse ich den 16 MHz-Quartz drin, schreibe in die Makefiles erstmal nur 
+19200 zum Programmieren ?ber den Booter. Und nehme 115200 wenn die Software 
+l?uft.
+
+Gestern hab ich ?brigens die meiste Beschaltung, die ich auf dem Steckbrett 
+hatte, mit Kupferlackf?deldraht direkt auf die SMD-Adapterplatine gel?tet. 
+z.B. Takterzeugung, Drive-LEDs, Reset, Booter-Jumper.  Jetzt ist auf dem 
+Steckbrett wieder Platz und ?bersicht f?r den 74LS05, die ich mir 
+zwischenzeitlich besorgt habe. Und einen TDA7052 hab ich jetzt auch hier, 
+aber der bleibt wohl erstmal liegen. Schade, dass Software machen so viel 
+l?nger dauert als Hardware zusammenstecken.
+
+Gru?,
+Thomas
+
+
+From skoe at directbox.com  Thu Sep 18 21:29:15 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Thu, 18 Sep 2008 21:29:15 +0200
+Subject: [Open1541-developers] Entwicklungsumgebung unter Windows
+Message-ID: <1221766156.6285.7.camel@eeepc>
+
+Tach Leute,
+
+Hab gerade Anleitungen zum Einrichten einer Entwicklungsumgebung unter
+Windows (cygwin) auf folgender Seite verlinkt:
+http://open1541.berlios.de/index.php?slug=development
+
+Vielleicht hat jemand von Euch ja mal Zeit und Lust, das auszuprobieren.
+
+Gru?,
+Thomas
+
+
+
+
+

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Open1541-developers] Baudraten
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/open1541-developers/2008-September/index.html" >
+   <LINK REL="made" HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20Baudraten&In-Reply-To=%3C200809061514.10989.skoe%40directbox.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000011.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Open1541-developers] Baudraten</H1>
+    <B>Thomas Giesel</B> 
+    <A HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20Baudraten&In-Reply-To=%3C200809061514.10989.skoe%40directbox.com%3E"
+       TITLE="[Open1541-developers] Baudraten">skoe at directbox.com
+       </A><BR>
+    <I>Sat Sep  6 15:14:10 CEST 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000011.html">[Open1541-developers] Baudraten
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hallo,
+
+gerade habe ich auf meinem Stullenbrett den 10 MHz-Quartz gegen einen 16 MHz 
+ausgetauscht. 
+
+Vorher hatte ich 6 * 10 = 60 MHz Core Clock und 
+60 MHz / 16 (fest) / 98 (config) = 38265 ca. 38400 baud.
+Das ist zum Programmieren okay, zum Echtzeit-Debuggen manchmal ein bisschen 
+wenig. Und f&#252;r evtl. folgende Datenanwendungen unbrauchbar.
+
+Jetzt habe ich 3 * 16 = 48 MHz Core oder 4 * 16 = 64 MHz Core und z.B.
+48 MHz / 16 / 26 = 115384 ca. 115200 baud oder sogar
+48 MHz / 16 / 3 = 1000000 baud zum Debuggen oder evtl. Datenanwendungen
+Allerdings kommt die automatische Baudratenerkennung zum Programmieren nur auf 
+19200, vermutlich weil sie die PLL nicht benutzt und deswegen nur 16 / 16 / x 
+kann.
+
+Einen Baudratenquartz kann ich nicht nehmen, weil ich dann nicht auf 1 MHz f&#252;r 
+den 6502 komme.
+
+Nun meine Frage: Kann nur mein RS232-USB-Adapter so ungew&#246;hnliche Baudraten 
+wie 500000 und 1000000, oder ist das &quot;normal&quot;?
+
+Wenn ich bei dem 16 MHz Quartz bleibe, muss ich mal sehen, ob ich dem 
+Programmiertool auch ein paar andere Bitraten beibringen kann... Oder ich 
+baue ein In-Application-Programming-Geraffel ein, dann kann ich die Software 
+bei programmierter PLL, z.B. mit 115200 r&#252;berschieben.
+
+Gru&#223;,
+
+Thomas
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000011.html">[Open1541-developers] Baudraten
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/open1541-developers">More information about the Open1541-developers
+mailing list</a><br>
+</body></html>

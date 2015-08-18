@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Open1541-developers] IRQ-Konzept und Hardware-Ideen
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/open1541-developers/2008-August/index.html" >
+   <LINK REL="made" HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20IRQ-Konzept%20und%20Hardware-Ideen&In-Reply-To=%3C200808060945.19320.skoe%40directbox.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000004.html">
+   <LINK REL="Next"  HREF="000006.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Open1541-developers] IRQ-Konzept und Hardware-Ideen</H1>
+    <B>Thomas Giesel</B> 
+    <A HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20IRQ-Konzept%20und%20Hardware-Ideen&In-Reply-To=%3C200808060945.19320.skoe%40directbox.com%3E"
+       TITLE="[Open1541-developers] IRQ-Konzept und Hardware-Ideen">skoe at directbox.com
+       </A><BR>
+    <I>Wed Aug  6 09:45:19 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000004.html">[Open1541-developers] GCR-Kodierung
+</A></li>
+        <LI>Next message: <A HREF="000006.html">[Open1541-developers] IRQ-Konzept und Hardware-Ideen
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>
+Hallo,
+
+diese Mail ist aus einem Austausch au&#223;erhalb der Liste entstanden. Aber 
+vielleicht habe ihr ja Ideen zu den Themen:
+
+Warnung: ich hab heute frei und bin momentan allein zuhause, das wird eine 
+lange Mail :-)
+
+&gt;<i> &gt; Inzwischen habe ich meine 6502-Emulation soweit optimiert, dass sie im
+</I>&gt;<i> &gt; Timer-IRQ eines 60 MHz ARM weniger als 50% Rechenzeit braucht. Klingt
+</I>&gt;<i> &gt; viel, das meiste davon ist aber der IRQ-Overhead.
+</I>&gt;<i>
+</I>&gt;<i> Das ging mir vorhin erst durch den Kopf.
+</I>&gt;<i> Sag' mal, 6502 Emulation ist ja eine Sache, die komplette Emulation der
+</I>&gt;<i> Floppy ist ja wieder was anderes.
+</I>
+(Weniger als 50% gilt &#252;brigens jetzt f&#252;r die Ausf&#252;hrung aus dem Flash.)
+
+Die zyklengenaue 6502-Emulation ist aber ein gro&#223;en Teilproblem. Wenn noch 
+mehr als 50% f&#252;r den Rest &#252;brig ist, passt das (hoffentlich).
+
+Man muss ja folgende Punkte miteinander verbinden:
+1. Emulation muss &#252;ber den Bus nach au&#223;en zyklengenau sein
+Bedeutet: Zumindest alle Zugriffe auf den Bus m&#252;ssen ausnahmslos zur richtigen 
+Zeit ausgef&#252;hrt werden.
+2. Nebenher m&#252;ssen Daten von der SD-Karte gelesen werden, umkodiert, dem 
+Lesekopf zugeschaufelt
+3. Benutzerinteraktion soll auch noch m&#246;glich sein. Diskswap, Display etc.
+4. Das ganze Geraffel soll in absehbarer Zeit implementierbar und vor allem 
+wartbar sein
+
+Wenn man die Nebenl&#228;ufigkeit wegl&#228;sst, wird das ganze viel einfacher. Dann 
+kann man das ganze im main-loop laufen lassen und braucht nur f&#252;r die 
+I/O-Zugriffe auf das Timing warten.
+
+Auch wenn man die Genauigkeit zum Bus hin wegl&#228;sst, ist es ziemlich einfach. 
+Dann macht man dass, was ein normaler C64-Emulator macht. Der Vice z.B.: 
+Immer, wenn der C64 auf den Bus zugreifen will, wird die Floppy f&#252;r so viele 
+Zyklen emuliert, dass beide wieder der gleichen Zeit entsprechen. Dann wird 
+der Buszustand ausgewertet.
+
+W&#228;ren diese Punkte nicht, k&#246;nnte das auch bequem auf einem Atmega laufen.
+Die Ans&#228;tze Timer-IRQ und vorauseilende Schleife m&#246;chte ich sp&#228;ter auch noch 
+kombinieren: F&#252;r Pille-Palle-Instruktionen soll nicht extra ein IRQ ausgel&#246;st 
+werden, sondern sie sollen z.T. direkt hintereinander ausgef&#252;hrt werden. Eine 
+Fastloader-Schleife greift u.U. ca. alle zwei bis drei 6502-Instruktionen auf 
+den Bus zu, man k&#246;nnte dann also zwei bis drei Instruktionen in einem Rutsch 
+emulieren. Wird vermutlich nochmal ca. 1/3 Rechenzeit sparen.
+
+Nat&#252;rlich habe ich mir auch Gedanken gemacht, wie man die o.g. Probleme ohne 
+Timer-IRQ l&#246;sen kann. Ohne den Hauptcode manuell in 
+1-us-Zeitscheiben-kooperatives-Multitasking-H&#228;pchen zu zerlegen:
+
+Man k&#246;nnte die 6502 Emulation abwechselnd mit einem Bytecode-Interpreter 
+ausf&#252;hren, dann k&#246;nnte beides im main-loop laufen. Der Bytecode k&#246;nnte im 
+einfachsten Falle eine zweite 6502-Emulation, ein BASIC-Interpeter oder im 
+Extremfall eine Java-Maschine sein (letzteres nat&#252;rlich illusorisch). Den 
+Bytecodes k&#246;nnte man dann noch spezialisierte &quot;illegale Opcodes&quot; beimischen, 
+die m&#228;chtige Dinge tun. Voraussetzung ist nur, dass jeder einzelne Bytecode 
+so schnell ausgef&#252;hrt wird, dass der Prozessor rechtzeitig wieder den 
+Haupt-6502 emulieren kann.
+
+Diesen Ansatz k&#246;nnte man vielleicht sogar auf einem Atmega umsetzen, wenn er 
+mit &gt;= 20 MHz l&#228;uft. W&#252;rde man da beide Interpreter in ASM implementieren, 
+k&#246;nnten sie sich die 32 Register so teilen, dass man sie nie 
+zwischenspeichern m&#252;sste.
+
+Aber man br&#228;uchte IMHO min 128 k Flash und 32 k RAM. Und f&#252;r diesen Ausbau ist 
+Atmega auch nicht billiger/kleiner/leichter zu verarbeiten als ARM oder 
+AVR32. Oder?
+
+Das zweite Problem ist, dass der Haupcode (also ca. das, was jetzt im sd2iec 
+l&#228;uft) dann von C in diesen Bytecode &#252;bersetzt oder portiert werden muss (im 
+Falle eines 6502 k&#246;nnte man ja den cc65 versuchen).
+
+Der einfachste und billigste Weg erscheint mir also im Moment, das nicht 
+optimale Design mit M&#228;rchenhertz zu kompensieren...
+
+&gt;<i> Und wenn nur f&#252;r Fastloader mit der &quot;Floppy&quot; aussen rum so wie jetzt,
+</I>&gt;<i> also ohne Ballast,
+</I>&gt;<i> der Code muss ja nicht nur emuliert sondern dann auch interpretiert
+</I>&gt;<i> werden.
+</I>
+In der momentanen Implementierung ist alles so, als w&#252;rde der 6502-Code auf 
+einer echten Maschine laufen. z.B. sind (emulierte) Speicherzugriffe so 
+gekapselt, dass sie z.B. &#252;ber die VIA den IEC-bus beeinflussen k&#246;nnten. So 
+ein VIA-Zugriff wird z.B. etwas langsamer sein als ein normaler 
+Speicherzugriff, aber nur jeweils ein paar Taktzyklen mehr (Hardware-Gedanken 
+dazu s.u.).
+
+&gt;<i> Kann mir nicht vorstellen, dass es keine USB-OTB ARM's gibt, so exotisch
+</I>&gt;<i> ist dann doch inzwischen auch nicht mehr?
+</I>&gt;<i>
+</I>&gt;<i> LPC2468? Okay, wohl eher etwas gross...
+</I>
+Leider hab ich keinen gefunden. Beim LPC muss man dann schon 208 Beinchen 
+l&#246;ten. Beim AT91 sieht's &#228;hnlich aus, da haben nur die ARM9-Typen USB Host 
+oder OTG. Und da habe ich mir den Preis gar nicht erst angesehen. Der AVR32 
+scheint tats&#228;chlich der einzige zu sein, der in dieser Gr&#246;&#223;enordnung USB-OTG 
+mitbringt.
+
+Bez&#252;glich der Prototypen, die ich demn&#228;chst aufbauen will:
+
+Hab mir bei Digikey LPC 2136 bestellt. Weil ich den Gedanken noch nicht 
+aufgegeben habe, eine einseitige Leiterplatte zu verwenden, habe ich 
+Reverse-Type-SD-Karten-Sockel bestellt. Man l&#246;tet sie also auf die 
+Best&#252;ckungsseite (=unten) und kann die Karte trotzdem mit dem Gesicht nach 
+oben reinstecken. (Digikey HR846CT-ND)
+
+Als Spannungsregler mit ausreichend Reserve habe ich den LM1117MP-3.3CT-ND 
+gew&#228;hlt. Den gibt's nat&#252;rlich auch bedrahtet. 
+
+F&#252;r die IEC-Beschaltung habe ich vorerst einen 74HC03 (4x NAND OC) ausgesucht. 
+Da hat man die Open-Collector-Ausg&#228;nge und die Logik f&#252;r ATN-ACK zusammen. 
+Wenn man ihn bei 5V betreibt, braucht man keine Spannungsteiler. Hab aber 
+noch nicht kontrolliert, ob die LPC-Ausg&#228;nge von den Spannungen her dann f&#252;r 
+die Eing&#228;nge des HC03 reichen.
+
+Wenn man den 74HC03 bei 3,3 Volt betreiben m&#246;chte/muss, braucht man einen 
+Spannungsteiler f&#252;r ATN, was an einen Gatter-Eingang geht. 
+
+Oh man, der LPC hat keine internen Pullups, also m&#252;ssen die dann zumindest f&#252;r 
+die IEC-Leitungen rein. Kann aber sowieso nicht schaden, wg. der sonst gro&#223;en 
+Ramp-Up time.
+
+Als Display habe ich das Reichelt LCD 162C LED oder LCD 162C ausgew&#228;hlt, 
+kostet mit Beleuchtung nur ca. die H&#228;lfte des EADOG, das ich hier zu liegen 
+habe. Und es gibt unz&#228;hlige Pin-kompatible Typen, die hoffentlich auch 
+SW-kompatibel sind. W&#252;rde ich 4-bit parallel anbinden. Das Display sollte 
+IMHO optional und nachbest&#252;ckbar sein. Die Bedienerf&#252;hrung m&#252;sste sich dann 
+dem Ausbau anpassen. z.B. &#220;ber INI-Datei auf der Karte einstellbar. (Hat der 
+LPC eigentlich EEPROM?) Das Display sollte auf Stelzen &#252;ber den anderen 
+Bauteilen auf der Best&#252;ckungsseite stehen, so dass oben durch einen 
+Geh&#228;useausschnitt lesbar ist.
+
+Die IEC-Signale sollten von der Reihenfolge her genauso angeschlossen sein, 
+wie sie an der VIA sind. Dann braucht man in der Emulation nicht noch Bits 
+puzzlen. 
+
+An den D/A-Ausgang w&#252;rde ich &#252;ber einen TDA7052 und entweder einen internen 
+Miniatur-Lautsprecher oder eine 3,5mm Klinke anschlie&#223;en. F&#252;r Floppyger&#228;usche 
+w&#252;rde der interne Lautsprecher nat&#252;rlich dichter an einer 1541 sein. Sowas 
+wie der Reichelt BL 50 oder BL 45. Br&#228;uchte vermutlich auch keine extra 
+Geh&#228;use&#246;ffnungen, um die dumpfen Laufwerksger&#228;usche von sich zu geben. Audio 
+k&#246;nnte auch optional sein. Obwohl der Bauteileaufwand bei max. 1,50 Euro 
+liegt.
+
+Und das ganze sollte dann hoffentlich auch in das Geh&#228;use SD 10 GR passen. 
+Jaja, das klingt nicht nur nach Prototypen, aber ich will damit auch 
+mechanische Erfahrungen sammeln. Die Teile sollte heute oder morgen hier 
+ankommen. Aber mit Eagle habe ich noch keine Erfahrungen, das kann eine Weile 
+dauern. Besonders wo die SW momentan Prio hat.
+
+Gru&#223;,
+Thomas
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000004.html">[Open1541-developers] GCR-Kodierung
+</A></li>
+	<LI>Next message: <A HREF="000006.html">[Open1541-developers] IRQ-Konzept und Hardware-Ideen
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/open1541-developers">More information about the Open1541-developers
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Open1541-developers] Baudraten
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/open1541-developers/2008-September/index.html" >
+   <LINK REL="made" HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20Baudraten&In-Reply-To=%3C200809070843.54408.skoe%40directbox.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000012.html">
+   <LINK REL="Next"  HREF="000014.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Open1541-developers] Baudraten</H1>
+    <B>Thomas Giesel</B> 
+    <A HREF="mailto:open1541-developers%40lists.berlios.de?Subject=Re%3A%20%5BOpen1541-developers%5D%20Baudraten&In-Reply-To=%3C200809070843.54408.skoe%40directbox.com%3E"
+       TITLE="[Open1541-developers] Baudraten">skoe at directbox.com
+       </A><BR>
+    <I>Sun Sep  7 08:43:54 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000012.html">[Open1541-developers] Baudraten
+</A></li>
+        <LI>Next message: <A HREF="000014.html">[Open1541-developers] Entwicklungsumgebung unter Windows
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hallo Oliver, Gerald,
+
+danke, dass Ihr so genau nachgesehen habt.
+
+&gt;<i> Was h&#228;lst Du denn davon:
+</I>&gt;<i> 60 MHz / 16 (fest) / 67 (config)  =  55970  =  ca. 56000 Baud
+</I>
+Mhh, das kann der wieder nicht, den ich hier verwende, der k&#246;nnte nur 57600.
+
+&gt;<i> Oder Du vergi&#223;t das mit dem &quot;optional&quot;, und der FT232RL wird Pflicht.
+</I>&gt;<i> Aber wahrscheinlich keine so gute Idee.
+</I>
+Genau. Auf alle F&#228;lle nicht, solange es keine ganz tolle Anwendung daf&#252;r gibt.
+Und da f&#228;llt mir au&#223;er Mounten von Disk-Images vom PC momentan nichts ein.
+
+Also lasse ich den 16 MHz-Quartz drin, schreibe in die Makefiles erstmal nur 
+19200 zum Programmieren &#252;ber den Booter. Und nehme 115200 wenn die Software 
+l&#228;uft.
+
+Gestern hab ich &#252;brigens die meiste Beschaltung, die ich auf dem Steckbrett 
+hatte, mit Kupferlackf&#228;deldraht direkt auf die SMD-Adapterplatine gel&#246;tet. 
+z.B. Takterzeugung, Drive-LEDs, Reset, Booter-Jumper.  Jetzt ist auf dem 
+Steckbrett wieder Platz und &#220;bersicht f&#252;r den 74LS05, die ich mir 
+zwischenzeitlich besorgt habe. Und einen TDA7052 hab ich jetzt auch hier, 
+aber der bleibt wohl erstmal liegen. Schade, dass Software machen so viel 
+l&#228;nger dauert als Hardware zusammenstecken.
+
+Gru&#223;,
+Thomas
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000012.html">[Open1541-developers] Baudraten
+</A></li>
+	<LI>Next message: <A HREF="000014.html">[Open1541-developers] Entwicklungsumgebung unter Windows
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/open1541-developers">More information about the Open1541-developers
+mailing list</a><br>
+</body></html>

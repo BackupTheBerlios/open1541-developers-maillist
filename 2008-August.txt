@@ -1,0 +1,404 @@
+From skoe at directbox.com  Mon Aug  4 19:59:52 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Mon, 4 Aug 2008 19:59:52 +0200
+Subject: [Open1541-developers] GCR-Kodierung
+Message-ID: <200808041959.53121.skoe@directbox.com>
+
+
+Hallo Mini-Liste!
+
+Ja, wir sind jetzt schon drei Leute ;-) Einen hab ich an der Domain erkannt. 
+Nun will ich die Liste doch endlich mal ausprobieren. Obwohl der Rest der 
+Seite Englisch ist, reicht hier wohl vorerst Deutsch.
+
+Unseen hat mal im Forum64 indirekt vorgeschlagen, jeweils einen ganzen Track 
+im GCR-Format im RAM vorzuhalten. Damit die Daten in Echtzeit am virtuellen 
+Lesekopf vorbeiziehen k?nnen? Oder gibt's noch einen anderen Grund? Dann w?re 
+es wohl am besten, wenn man die Daten liest und kodiert (im Falle eines d64) 
+w?hrend sich der Kopf zur n?chsten Spur bewegt. Da hat man dann ja auch noch 
+einen Moment Zeit, bis der Header des n?chsten Sektors vorbeikommt.
+
+Gru?,
+Thomas
+
+
+From ml at akana.de  Mon Aug  4 20:46:20 2008
+From: ml at akana.de (Ingo Korb)
+Date: Mon, 04 Aug 2008 20:46:20 +0200
+Subject: [Open1541-developers] GCR-Kodierung
+In-Reply-To: <200808041959.53121.skoe@directbox.com> (Thomas Giesel's
+	message of "Mon, 4 Aug 2008 19:59:52 +0200")
+References: <200808041959.53121.skoe@directbox.com>
+Message-ID: <u1w14r537.fsf@dragon.akana.de>
+
+Thomas Giesel <skoe at directbox.com> writes:
+
+> Unseen hat mal im Forum64 indirekt vorgeschlagen, jeweils einen ganzen Track 
+> im GCR-Format im RAM vorzuhalten. Damit die Daten in Echtzeit am virtuellen 
+> Lesekopf vorbeiziehen k?nnen? Oder gibt's noch einen anderen Grund?
+
+Es vereinfacht zumindest die Programmierung deutlich wenn man nur Daten
+aus einem vorgegebenen Ringpuffer lesen muss und nicht st?ndig zwischen
+zwei kleinen Puffern wechselt in die das jeweils aktuelle Datenh?ppchen
+geladen wird.
+
+Ausserdem wird das Timing unkritischer - sd2iec l?dt einen Sektor von
+der SD-Karte in 5,1ms (wird bei h?herem SD-Takt schneller, aber weniger
+stark als der Takt steigt), ein GCR-codierter Track braucht
+ca. 8kByte. Die Lesezeit liegt damit bei 80ms, eine Diskrotation dauert
+200ms. Man kann nat?rlich das Lesen von SD durch h?heren Takt
+beschleunigen, andererseits muss aber noch der Overhead der Software und
+evtl. weitere Lesezugriffe auf die FAT eingerechnet werden.
+
+-ik
+
+
+
+From ogf at bnv-bamberg.de  Tue Aug  5 20:57:45 2008
+From: ogf at bnv-bamberg.de (Oliver Fleischmann)
+Date: Tue, 5 Aug 2008 20:57:45 +0200 (MEST)
+Subject: [Open1541-developers] GCR-Kodierung
+In-Reply-To: <u1w14r537.fsf@dragon.akana.de>
+Message-ID: <Pine.LNX.4.33.0808052026180.22489-100000@server.ogf.to>
+
+Hallo!
+
+> > Unseen hat mal im Forum64 indirekt vorgeschlagen, jeweils einen ganzen Track
+> > im GCR-Format im RAM vorzuhalten. Damit die Daten in Echtzeit am virtuellen
+> > Lesekopf vorbeiziehen k?nnen? Oder gibt's noch einen anderen Grund?
+>
+> Es vereinfacht zumindest die Programmierung deutlich wenn man nur Daten
+> aus einem vorgegebenen Ringpuffer lesen muss und nicht st?ndig zwischen
+> zwei kleinen Puffern wechselt in die das jeweils aktuelle Datenh?ppchen
+> geladen wird.
+
+Und mit GCR-Rohdaten wird es auch einfacher, Sonderformate (Kopierschutz
+o.?.) zu unterst?tzen.
+
+Oliver
+
+
+
+From skoe at directbox.com  Tue Aug  5 21:35:17 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Tue, 5 Aug 2008 21:35:17 +0200
+Subject: [Open1541-developers] GCR-Kodierung
+In-Reply-To: <Pine.LNX.4.33.0808052026180.22489-100000@server.ogf.to>
+References: <Pine.LNX.4.33.0808052026180.22489-100000@server.ogf.to>
+Message-ID: <200808052135.17783.skoe@directbox.com>
+
+>
+> Und mit GCR-Rohdaten wird es auch einfacher, Sonderformate (Kopierschutz
+> o.?.) zu unterst?tzen.
+
+Du beziehst dich anscheinend auf g64-support. Da h?tte man die Daten bereits 
+kodiert auf der Disk, bei d64 muss man sie ja sogar nach GCR umkodieren 
+(wobei das wahrscheinlich auch nicht l?nger dauert, als sie ?ber SPI zu 
+lesen ;-)
+
+Darf ich dich fragen, ob Du aktiv bei der Entwicklung mitwirken m?chtest? 
+Nat?rlich ist es auch schon hilfreich, ab und zu einen n?tzlichen Hinweis 
+einzustreuen, wenn ich wiedermal ein Brett vorm Kopf habe.
+
+Gru?,
+
+Thomas
+
+
+
+From ogf at bnv-bamberg.de  Tue Aug  5 22:15:23 2008
+From: ogf at bnv-bamberg.de (Oliver Fleischmann)
+Date: Tue, 5 Aug 2008 22:15:23 +0200 (MEST)
+Subject: [Open1541-developers] GCR-Kodierung
+In-Reply-To: <200808052135.17783.skoe@directbox.com>
+Message-ID: <Pine.LNX.4.33.0808052146290.22489-100000@server.ogf.to>
+
+On Tue, 5 Aug 2008, Thomas Giesel wrote:
+
+> > Und mit GCR-Rohdaten wird es auch einfacher, Sonderformate (Kopierschutz
+> > o.?.) zu unterst?tzen.
+>
+> Du beziehst dich anscheinend auf g64-support. Da h?tte man die Daten bereits
+
+Ja.
+
+> kodiert auf der Disk, bei d64 muss man sie ja sogar nach GCR umkodieren
+> (wobei das wahrscheinlich auch nicht l?nger dauert, als sie ?ber SPI zu
+> lesen ;-)
+
+Da die emulierte 1541 auf jeden Fall GCR vom "Lesekopf" haben m?chte,
+f?hrt an der Umwandlung D64->GCR kein Weg vorbei.
+
+> Darf ich dich fragen, ob Du aktiv bei der Entwicklung mitwirken m?chtest?
+> Nat?rlich ist es auch schon hilfreich, ab und zu einen n?tzlichen Hinweis
+> einzustreuen, wenn ich wiedermal ein Brett vorm Kopf habe.
+
+Da ich das Projekt spannend finde, wollte ich erst mal nur passiv die
+Entwicklung verfolgen... Aber zwischendurch ein paar Kommentare schliesse
+ich nicht aus :-) Softwareerfahrung in C und Assembler auf diversen
+Platformen ist vorhanden, ausgerechnet ARM7 kenne ich allerdings nur vom
+H?rensagen (einige Arbeitskollegen benutzen AT91SAM7).
+
+Oliver
+
+
+
+From skoe at directbox.com  Wed Aug  6 09:45:19 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Wed, 6 Aug 2008 09:45:19 +0200
+Subject: [Open1541-developers] IRQ-Konzept und Hardware-Ideen
+Message-ID: <200808060945.19320.skoe@directbox.com>
+
+
+Hallo,
+
+diese Mail ist aus einem Austausch au?erhalb der Liste entstanden. Aber 
+vielleicht habe ihr ja Ideen zu den Themen:
+
+Warnung: ich hab heute frei und bin momentan allein zuhause, das wird eine 
+lange Mail :-)
+
+> > Inzwischen habe ich meine 6502-Emulation soweit optimiert, dass sie im
+> > Timer-IRQ eines 60 MHz ARM weniger als 50% Rechenzeit braucht. Klingt
+> > viel, das meiste davon ist aber der IRQ-Overhead.
+>
+> Das ging mir vorhin erst durch den Kopf.
+> Sag' mal, 6502 Emulation ist ja eine Sache, die komplette Emulation der
+> Floppy ist ja wieder was anderes.
+
+(Weniger als 50% gilt ?brigens jetzt f?r die Ausf?hrung aus dem Flash.)
+
+Die zyklengenaue 6502-Emulation ist aber ein gro?en Teilproblem. Wenn noch 
+mehr als 50% f?r den Rest ?brig ist, passt das (hoffentlich).
+
+Man muss ja folgende Punkte miteinander verbinden:
+1. Emulation muss ?ber den Bus nach au?en zyklengenau sein
+Bedeutet: Zumindest alle Zugriffe auf den Bus m?ssen ausnahmslos zur richtigen 
+Zeit ausgef?hrt werden.
+2. Nebenher m?ssen Daten von der SD-Karte gelesen werden, umkodiert, dem 
+Lesekopf zugeschaufelt
+3. Benutzerinteraktion soll auch noch m?glich sein. Diskswap, Display etc.
+4. Das ganze Geraffel soll in absehbarer Zeit implementierbar und vor allem 
+wartbar sein
+
+Wenn man die Nebenl?ufigkeit wegl?sst, wird das ganze viel einfacher. Dann 
+kann man das ganze im main-loop laufen lassen und braucht nur f?r die 
+I/O-Zugriffe auf das Timing warten.
+
+Auch wenn man die Genauigkeit zum Bus hin wegl?sst, ist es ziemlich einfach. 
+Dann macht man dass, was ein normaler C64-Emulator macht. Der Vice z.B.: 
+Immer, wenn der C64 auf den Bus zugreifen will, wird die Floppy f?r so viele 
+Zyklen emuliert, dass beide wieder der gleichen Zeit entsprechen. Dann wird 
+der Buszustand ausgewertet.
+
+W?ren diese Punkte nicht, k?nnte das auch bequem auf einem Atmega laufen.
+Die Ans?tze Timer-IRQ und vorauseilende Schleife m?chte ich sp?ter auch noch 
+kombinieren: F?r Pille-Palle-Instruktionen soll nicht extra ein IRQ ausgel?st 
+werden, sondern sie sollen z.T. direkt hintereinander ausgef?hrt werden. Eine 
+Fastloader-Schleife greift u.U. ca. alle zwei bis drei 6502-Instruktionen auf 
+den Bus zu, man k?nnte dann also zwei bis drei Instruktionen in einem Rutsch 
+emulieren. Wird vermutlich nochmal ca. 1/3 Rechenzeit sparen.
+
+Nat?rlich habe ich mir auch Gedanken gemacht, wie man die o.g. Probleme ohne 
+Timer-IRQ l?sen kann. Ohne den Hauptcode manuell in 
+1-us-Zeitscheiben-kooperatives-Multitasking-H?pchen zu zerlegen:
+
+Man k?nnte die 6502 Emulation abwechselnd mit einem Bytecode-Interpreter 
+ausf?hren, dann k?nnte beides im main-loop laufen. Der Bytecode k?nnte im 
+einfachsten Falle eine zweite 6502-Emulation, ein BASIC-Interpeter oder im 
+Extremfall eine Java-Maschine sein (letzteres nat?rlich illusorisch). Den 
+Bytecodes k?nnte man dann noch spezialisierte "illegale Opcodes" beimischen, 
+die m?chtige Dinge tun. Voraussetzung ist nur, dass jeder einzelne Bytecode 
+so schnell ausgef?hrt wird, dass der Prozessor rechtzeitig wieder den 
+Haupt-6502 emulieren kann.
+
+Diesen Ansatz k?nnte man vielleicht sogar auf einem Atmega umsetzen, wenn er 
+mit >= 20 MHz l?uft. W?rde man da beide Interpreter in ASM implementieren, 
+k?nnten sie sich die 32 Register so teilen, dass man sie nie 
+zwischenspeichern m?sste.
+
+Aber man br?uchte IMHO min 128 k Flash und 32 k RAM. Und f?r diesen Ausbau ist 
+Atmega auch nicht billiger/kleiner/leichter zu verarbeiten als ARM oder 
+AVR32. Oder?
+
+Das zweite Problem ist, dass der Haupcode (also ca. das, was jetzt im sd2iec 
+l?uft) dann von C in diesen Bytecode ?bersetzt oder portiert werden muss (im 
+Falle eines 6502 k?nnte man ja den cc65 versuchen).
+
+Der einfachste und billigste Weg erscheint mir also im Moment, das nicht 
+optimale Design mit M?rchenhertz zu kompensieren...
+
+> Und wenn nur f?r Fastloader mit der "Floppy" aussen rum so wie jetzt,
+> also ohne Ballast,
+> der Code muss ja nicht nur emuliert sondern dann auch interpretiert
+> werden.
+
+In der momentanen Implementierung ist alles so, als w?rde der 6502-Code auf 
+einer echten Maschine laufen. z.B. sind (emulierte) Speicherzugriffe so 
+gekapselt, dass sie z.B. ?ber die VIA den IEC-bus beeinflussen k?nnten. So 
+ein VIA-Zugriff wird z.B. etwas langsamer sein als ein normaler 
+Speicherzugriff, aber nur jeweils ein paar Taktzyklen mehr (Hardware-Gedanken 
+dazu s.u.).
+
+> Kann mir nicht vorstellen, dass es keine USB-OTB ARM's gibt, so exotisch
+> ist dann doch inzwischen auch nicht mehr?
+>
+> LPC2468? Okay, wohl eher etwas gross...
+
+Leider hab ich keinen gefunden. Beim LPC muss man dann schon 208 Beinchen 
+l?ten. Beim AT91 sieht's ?hnlich aus, da haben nur die ARM9-Typen USB Host 
+oder OTG. Und da habe ich mir den Preis gar nicht erst angesehen. Der AVR32 
+scheint tats?chlich der einzige zu sein, der in dieser Gr??enordnung USB-OTG 
+mitbringt.
+
+Bez?glich der Prototypen, die ich demn?chst aufbauen will:
+
+Hab mir bei Digikey LPC 2136 bestellt. Weil ich den Gedanken noch nicht 
+aufgegeben habe, eine einseitige Leiterplatte zu verwenden, habe ich 
+Reverse-Type-SD-Karten-Sockel bestellt. Man l?tet sie also auf die 
+Best?ckungsseite (=unten) und kann die Karte trotzdem mit dem Gesicht nach 
+oben reinstecken. (Digikey HR846CT-ND)
+
+Als Spannungsregler mit ausreichend Reserve habe ich den LM1117MP-3.3CT-ND 
+gew?hlt. Den gibt's nat?rlich auch bedrahtet. 
+
+F?r die IEC-Beschaltung habe ich vorerst einen 74HC03 (4x NAND OC) ausgesucht. 
+Da hat man die Open-Collector-Ausg?nge und die Logik f?r ATN-ACK zusammen. 
+Wenn man ihn bei 5V betreibt, braucht man keine Spannungsteiler. Hab aber 
+noch nicht kontrolliert, ob die LPC-Ausg?nge von den Spannungen her dann f?r 
+die Eing?nge des HC03 reichen.
+
+Wenn man den 74HC03 bei 3,3 Volt betreiben m?chte/muss, braucht man einen 
+Spannungsteiler f?r ATN, was an einen Gatter-Eingang geht. 
+
+Oh man, der LPC hat keine internen Pullups, also m?ssen die dann zumindest f?r 
+die IEC-Leitungen rein. Kann aber sowieso nicht schaden, wg. der sonst gro?en 
+Ramp-Up time.
+
+Als Display habe ich das Reichelt LCD 162C LED oder LCD 162C ausgew?hlt, 
+kostet mit Beleuchtung nur ca. die H?lfte des EADOG, das ich hier zu liegen 
+habe. Und es gibt unz?hlige Pin-kompatible Typen, die hoffentlich auch 
+SW-kompatibel sind. W?rde ich 4-bit parallel anbinden. Das Display sollte 
+IMHO optional und nachbest?ckbar sein. Die Bedienerf?hrung m?sste sich dann 
+dem Ausbau anpassen. z.B. ?ber INI-Datei auf der Karte einstellbar. (Hat der 
+LPC eigentlich EEPROM?) Das Display sollte auf Stelzen ?ber den anderen 
+Bauteilen auf der Best?ckungsseite stehen, so dass oben durch einen 
+Geh?useausschnitt lesbar ist.
+
+Die IEC-Signale sollten von der Reihenfolge her genauso angeschlossen sein, 
+wie sie an der VIA sind. Dann braucht man in der Emulation nicht noch Bits 
+puzzlen. 
+
+An den D/A-Ausgang w?rde ich ?ber einen TDA7052 und entweder einen internen 
+Miniatur-Lautsprecher oder eine 3,5mm Klinke anschlie?en. F?r Floppyger?usche 
+w?rde der interne Lautsprecher nat?rlich dichter an einer 1541 sein. Sowas 
+wie der Reichelt BL 50 oder BL 45. Br?uchte vermutlich auch keine extra 
+Geh?use?ffnungen, um die dumpfen Laufwerksger?usche von sich zu geben. Audio 
+k?nnte auch optional sein. Obwohl der Bauteileaufwand bei max. 1,50 Euro 
+liegt.
+
+Und das ganze sollte dann hoffentlich auch in das Geh?use SD 10 GR passen. 
+Jaja, das klingt nicht nur nach Prototypen, aber ich will damit auch 
+mechanische Erfahrungen sammeln. Die Teile sollte heute oder morgen hier 
+ankommen. Aber mit Eagle habe ich noch keine Erfahrungen, das kann eine Weile 
+dauern. Besonders wo die SW momentan Prio hat.
+
+Gru?,
+Thomas
+
+
+
+From skoe at directbox.com  Wed Aug  6 12:41:03 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Wed, 6 Aug 2008 12:41:03 +0200
+Subject: [Open1541-developers] IRQ-Konzept und Hardware-Ideen
+In-Reply-To: <200808060945.19320.skoe@directbox.com>
+References: <200808060945.19320.skoe@directbox.com>
+Message-ID: <200808061241.03209.skoe@directbox.com>
+
+> Man l?tet sie also auf die
+> Best?ckungsseite (=unten) und kann die Karte trotzdem mit dem Gesicht nach
+> oben reinstecken. (Digikey HR846CT-ND)
+
+Quatsch. Das sollte hei?en: L?tseite (unten). Auf die Best?ckungsseite geht es 
+ja bei einer einseitigen Leiterplatte eben nicht. Dar?ber, auf der 
+Best?ckungsseite sollen dann ja z.B. Lautsprecher und/oder Display.
+
+
+
+From ml at akana.de  Wed Aug  6 14:23:48 2008
+From: ml at akana.de (Ingo Korb)
+Date: Wed, 06 Aug 2008 14:23:48 +0200
+Subject: [Open1541-developers] IRQ-Konzept und Hardware-Ideen
+In-Reply-To: <200808060945.19320.skoe@directbox.com> (Thomas Giesel's
+	message of "Wed, 6 Aug 2008 09:45:19 +0200")
+References: <200808060945.19320.skoe@directbox.com>
+Message-ID: <uej52pc17.fsf@dragon.akana.de>
+
+Thomas Giesel <skoe at directbox.com> writes:
+
+> Aber man br?uchte IMHO min 128 k Flash und 32 k RAM. Und f?r diesen Ausbau ist 
+> Atmega auch nicht billiger/kleiner/leichter zu verarbeiten als ARM oder 
+> AVR32. Oder?
+
+Man br?uchte daf?r mindestens einen ATmega128(1) und ein externes RAM.
+
+> Das zweite Problem ist, dass der Haupcode (also ca. das, was jetzt im sd2iec 
+> l?uft) dann von C in diesen Bytecode ?bersetzt oder portiert werden muss (im 
+> Falle eines 6502 k?nnte man ja den cc65 versuchen).
+
+Da werden einige Anpassungen notwendig sein, cc65 kennt zB keine
+Bitfilder.
+
+> Wenn man ihn bei 5V betreibt, braucht man keine Spannungsteiler. Hab aber 
+> noch nicht kontrolliert, ob die LPC-Ausg?nge von den Spannungen her dann f?r 
+> die Eing?nge des HC03 reichen.
+
+Bei einem HCT03 w?rde es definitiv funktionieren.
+
+-ik
+
+
+
+From skoe at directbox.com  Mon Aug 18 21:52:13 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Mon, 18 Aug 2008 21:52:13 +0200
+Subject: [Open1541-developers] =?utf-8?q?Mal_sehen=2C_ob_der_Admin_aus_dem?=
+	=?utf-8?q?_Urlaub_zur=C3=BCck_ist?=
+Message-ID: <200808182152.13722.skoe@directbox.com>
+
+Hallo,
+
+die Mail ist haupts?chlich, um zu sehen, ob die Liste wieder funktioniert.
+
+Um ihr auch etwas Inhalt zu verpassen: Mein Patch ist endlich im 
+Skyeye-Emulator angekommen (www.skyeye.org), so dass die open1541-Software 
+jetzt darauf l?uft.
+
+Gru?,
+Thomas
+
+
+From skoe at directbox.com  Sun Aug 31 14:35:41 2008
+From: skoe at directbox.com (Thomas Giesel)
+Date: Sun, 31 Aug 2008 14:35:41 +0200
+Subject: [Open1541-developers] Ein Broadcast-Ping an die Mailing-Liste
+Message-ID: <200808311435.41431.skoe@directbox.com>
+
+Hallo Leute,
+
+wer ist denn eigentlich so alles in der Mailing-Liste? 3 der 5 hab ich an der 
+E-Mail-Adresse erkannt. 
+
+Ist etwas schwierig, wenn man die Namen aus dem Forum64 hier nicht zuordnen 
+kann und deshalb nicht wei?, ob alle hier mitlesen, die dort auch ?fters was 
+Konstruktives beitragen.
+
+Aber wie Unseen schon geschrieben hat: Ein Mailprogramm (und sogar das Web-IF 
+des Webmailers...) bedient sich doch etwas besser als der Forums-Editor. 
+Au?erdem hat man eine ?bersichtliche Baumansicht.
+
+Gru?,
+Thomas
+
+
